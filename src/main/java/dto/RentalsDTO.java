@@ -8,11 +8,11 @@ import java.util.List;
 
 public class RentalsDTO {
 
-    public List<RentalDTO> rentalOrders = new ArrayList();
+    public List<RentalDTO> rentals = new ArrayList();
 
     public RentalsDTO(List<Rental> rentals) {
         for (Rental r : rentals) {
-            this.rentalOrders.add(new RentalDTO(r));
+            this.rentals.add(new RentalDTO(r));
         }
     }
 

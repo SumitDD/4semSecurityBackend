@@ -1,13 +1,13 @@
 package facades;
 
+import entities.Role;
 import entities.User;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import security.errorhandling.AuthenticationException;
+import security.errorhandling.RegisterException;
 
-/**
- * @author lam@cphbusiness.dk
- */
+
 public class UserFacade {
 
     private static EntityManagerFactory emf;
@@ -41,6 +41,32 @@ public class UserFacade {
             em.close();
         }
         return user;
+    }
+    
+      public User createUser(String username, String password1, String password2) throws RegisterException {
+        if (password1.equals(password2) && password1.length()>=8) {
+            EntityManager em = emf.createEntityManager();
+            User user = new User(username, password1);
+            Role userRole = new Role("user");
+            user.addRole(userRole);
+            em.getTransaction().begin();
+            em.persist(userRole);
+            em.persist(user);
+            em.getTransaction().commit();
+
+            try {
+                user = em.find(User.class, username);
+                if (user == null || !user.verifyPassword(password1)) {
+                    throw new RegisterException("Invalid user name or password");
+                }
+            } finally {
+                em.close();
+            }
+            return user;
+
+        } else {
+            throw new RegisterException("The passwords didnt match and the characters must be identical");
+        }
     }
 
 }
