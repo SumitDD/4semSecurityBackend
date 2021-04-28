@@ -30,6 +30,7 @@ public class ApplicationConfig extends Application {
         resources.add(security.RolesAllowedFilter.class);
         resources.add(security.errorhandling.AuthenticationExceptionMapper.class);
         resources.add(security.errorhandling.NotAuthorizedExceptionMapper.class);
+        resources.add(security.errorhandling.RegisterExceptionMapper.class);
     }
     
 }
