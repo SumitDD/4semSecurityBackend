@@ -44,13 +44,12 @@ public class UserFacade {
     }
     
       public User createUser(String username, String password1, String password2) throws RegisterException {
-        if (password1.equals(password2) && password1.length()>=8) {
+        if (password1.equals(password2) && password1.length()>= 12) {
             EntityManager em = emf.createEntityManager();
             User user = new User(username, password1);
             Role userRole = new Role("user");
             user.addRole(userRole);
             em.getTransaction().begin();
-            em.persist(userRole);
             em.persist(user);
             em.getTransaction().commit();
 
