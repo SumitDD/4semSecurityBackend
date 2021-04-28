@@ -31,7 +31,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import utils.EMF_Creator;
-import utils.SetupTestUsers;
+//import utils.SetupTestUsers;
 
 @Path("rental")
 public class RentalResource {
