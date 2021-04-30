@@ -7,7 +7,14 @@ import dto.RentalsDTO;
 import entities.Car;
 import entities.Rental;
 import entities.User;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import static java.util.concurrent.TimeUnit.DAYS;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -53,7 +60,7 @@ public class RentalFacade {
             Query query = em.createQuery("SELECT c FROM Car c WHERE c.model = :model ");
             query.setParameter("model", createRentalDTO.model);
             car = (Car) query.getSingleResult();
-            totalRentalPrice = createRentalDTO.rentalDays * car.getPricePrDay();
+            totalRentalPrice = createRentalDTO.rentalDays  * car.getPricePrDay();
             rental = new Rental(createRentalDTO.rentalDays, totalRentalPrice);
             user.addRental(rental);
             car.addRental(rental);
@@ -74,12 +81,36 @@ public class RentalFacade {
     public CarsDTO getCars() {
         EntityManager em = emf.createEntityManager();
         List<Car> cars;
+        List<Car> availableCars = new ArrayList();
         try {
             cars = em.createQuery("SELECT c FROM Car c").getResultList();
+            for (Car car : cars) {
+                
+                System.out.println(car.getBrand()+ "------------------------");
+                if(car.getRentals().isEmpty()){
+                    availableCars.add(car);
+                }
+                for (Rental rental : car.getRentals()) {          
+                   Date rentalDate = rental.getRentalDate();
+                   LocalDate localRentalDate = Instant.ofEpochMilli(rentalDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+                   LocalDate finishedDate = localRentalDate.plusDays(rental.getRentalDays());
+                   
+                   LocalDate todaysDate = LocalDate.now();
+                    System.out.println(finishedDate + "----------------");
+                    System.out.println(todaysDate + "----------------");
+                   if(finishedDate.isBefore(todaysDate)){
+                       availableCars.add(car);
+                       
+                   }
+                }
+                
+            }
+            
+            
         } finally {
             em.close();
         }
-        return new CarsDTO(cars);
+        return new CarsDTO(availableCars);
     }
 
     public RentalsDTO getRentals() {
@@ -122,6 +153,7 @@ public class RentalFacade {
             rental.setCar(car);
             totalRentalPrice = rentalDTO.rentalDays * car.getPricePrDay();
             rental.setTotalRentPrice(totalRentalPrice);
+            rental.setRentalDate(rentalDTO.rentalDate);
             em.getTransaction().begin();
             em.merge(rental);
             em.getTransaction().commit();
