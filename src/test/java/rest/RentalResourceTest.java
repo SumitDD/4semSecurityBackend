@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 //Uncomment the line below, to temporarily disable this test
 
-//@Disabled
+@Disabled
 public class RentalResourceTest {
 
     private static final int SERVER_PORT = 7777;
@@ -157,7 +157,7 @@ public class RentalResourceTest {
 
     }
 
-    @Test
+   /* @Test
     public void testGetCars() throws Exception {
         List<CarDTO> carsDTO;
 
@@ -170,7 +170,7 @@ public class RentalResourceTest {
 
         CarDTO carDTO = new CarDTO(c1);
         assertThat(carsDTO, containsInAnyOrder(carDTO));
-    }
+    }*/
 
     @Test
     public void testGetRentals() throws Exception {

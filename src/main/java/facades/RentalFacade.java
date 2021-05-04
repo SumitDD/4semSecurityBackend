@@ -85,23 +85,20 @@ public class RentalFacade {
         try {
             cars = em.createQuery("SELECT c FROM Car c").getResultList();
             for (Car car : cars) {
-                
-                System.out.println(car.getBrand()+ "------------------------");
                 if(car.getRentals().isEmpty()){
                     availableCars.add(car);
-                }
-                for (Rental rental : car.getRentals()) {          
-                   Date rentalDate = rental.getRentalDate();
+                } else {
+                   Rental latestRental = car.getRentals().get(car.getRentals().size()-1);
+                   Date rentalDate = latestRental.getRentalDate();
                    LocalDate localRentalDate = Instant.ofEpochMilli(rentalDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
-                   LocalDate finishedDate = localRentalDate.plusDays(rental.getRentalDays());
+                   LocalDate finishedDate = localRentalDate.plusDays(latestRental.getRentalDays());
                    
                    LocalDate todaysDate = LocalDate.now();
-                    System.out.println(finishedDate + "----------------");
-                    System.out.println(todaysDate + "----------------");
+                    
                    if(finishedDate.isBefore(todaysDate)){
                        availableCars.add(car);
-                       
                    }
+                   
                 }
                 
             }
@@ -130,6 +127,7 @@ public class RentalFacade {
         try {
             rental = em.find(Rental.class, id);
             em.getTransaction().begin();
+            rental.getCar().getRentals().remove(rental);
             em.remove(rental);
             em.getTransaction().commit();
             return new RentalDTO(rental);
