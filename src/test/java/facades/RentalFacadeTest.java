@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import security.errorhandling.AuthenticationException;
 
 //Uncomment the line below, to temporarily disable this test
-@Disabled
+//@Disabled
 public class RentalFacadeTest {
 
     private static EntityManagerFactory emf;
@@ -68,6 +68,7 @@ public class RentalFacadeTest {
             admin = new User("admin", "testadmin");
             both = new User("user_admin", "testuseradmin");
             c1 = new Car("kia", "rio", 1968, 190);
+            c2 = new Car("bmw", "m5", 2010, 200);
             r = new Rental(10, 1500);
 
             Role userRole = new Role("user");
@@ -83,6 +84,7 @@ public class RentalFacadeTest {
             em.persist(u1);
             em.persist(admin);
             em.persist(both);
+            em.persist(c2);
 
             em.getTransaction().commit();
         } finally {
@@ -113,16 +115,23 @@ public class RentalFacadeTest {
     @Test
     public void testGetCars() {
         CarsDTO cars = rentalFacade.getCars();
-        assertEquals(0, cars.cars.size(), "Expects ");
-        assertThat(cars.cars, containsInAnyOrder(new CarDTO(c1)));
+        assertEquals(1, cars.cars.size(), "Expects the size of one ");
+        assertThat(cars.cars, containsInAnyOrder(new CarDTO(c2)));
     }
 
     @Test
-    public void testGetRentals() {
-        RentalsDTO rentals = rentalFacade.getRentals();
-        assertEquals(1, rentals.rentals.size(), "Expects ");
+    public void testGetAllRentals() {
+        RentalsDTO rentals = rentalFacade.getAllRentals();
+        assertEquals(1, rentals.rentals.size(), "Expects the size of one ");
         assertThat(rentals.rentals, containsInAnyOrder(new RentalDTO(r)));
     }
+       @Test
+    public void testGetRentalsForOneUser() {
+        RentalsDTO rentals = rentalFacade.getAllRentalsForOneUser(u1.getUserName());
+        assertEquals(1, rentals.rentals.size(), "Expects the size of one ");
+        assertThat(rentals.rentals, containsInAnyOrder(new RentalDTO(r)));
+    }
+   
 
     @Test
     public void testDeleteRental() {

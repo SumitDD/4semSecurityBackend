@@ -25,6 +25,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import org.junit.jupiter.api.AfterAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -32,7 +33,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 //Uncomment the line below, to temporarily disable this test
 
-@Disabled
+//@Disabled
 public class RentalResourceTest {
 
     private static final int SERVER_PORT = 7777;
@@ -92,6 +93,7 @@ public class RentalResourceTest {
             admin = new User("admin", "testadmin");
             both = new User("user_admin", "testuseradmin");
             c1 = new Car("kia", "rio", 1968, 190);
+            c2 = new Car("bmw", "m5", 2010, 200);
             r = new Rental(10, 1500);
 
             Role userRole = new Role("user");
@@ -105,6 +107,7 @@ public class RentalResourceTest {
             em.persist(userRole);
             em.persist(adminRole);
             em.persist(u1);
+            em.persist(c2);
             em.persist(admin);
             em.persist(both);
 
@@ -157,7 +160,7 @@ public class RentalResourceTest {
 
     }
 
-   /* @Test
+    @Test
     public void testGetCars() throws Exception {
         List<CarDTO> carsDTO;
 
@@ -168,12 +171,12 @@ public class RentalResourceTest {
                 .then()
                 .extract().body().jsonPath().getList("cars", CarDTO.class);
 
-        CarDTO carDTO = new CarDTO(c1);
+        CarDTO carDTO = new CarDTO(c2);
         assertThat(carsDTO, containsInAnyOrder(carDTO));
-    }*/
+    }
 
     @Test
-    public void testGetRentals() throws Exception {
+    public void testGetAllRentals() throws Exception {
         login("admin", "testadmin");
         List<RentalDTO> rentalsDTO;
 
@@ -181,7 +184,7 @@ public class RentalResourceTest {
                 .contentType("application/json")
                 .header("x-access-token", securityToken)
                 .when()
-                .get("/rental/getrentals/")
+                .get("/rental/getallrentals/")
                 .then()
                 .extract().body().jsonPath().getList("rentals", RentalDTO.class);
 
@@ -189,6 +192,24 @@ public class RentalResourceTest {
 
         assertThat(rentalsDTO, containsInAnyOrder(rentalDTO));
     }
+    
+      @Test
+    public void testGetAllRentalsForOneUser() throws Exception {
+        login("user", "testuser");
+        List<RentalDTO> rentalsDTO;
+
+        rentalsDTO = given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .when()
+                .get("/rental/getallrentalsoneuser/" + u1.getUserName())
+                .then()
+                .extract().body().jsonPath().getList("rentals", RentalDTO.class);
+
+        RentalDTO rentalDTO = new RentalDTO(r);
+        assertThat(rentalsDTO, containsInAnyOrder(rentalDTO));
+    }
+    
 
     @Test
     public void testDeleteRental() throws Exception {
