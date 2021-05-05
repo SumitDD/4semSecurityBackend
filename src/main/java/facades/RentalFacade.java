@@ -7,6 +7,7 @@ import dto.RentalsDTO;
 import entities.Car;
 import entities.Rental;
 import entities.User;
+import errorhandling.NotFoundException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -46,7 +47,7 @@ public class RentalFacade {
         return emf.createEntityManager();
     }
 
-    public RentalDTO createRental(CreateRentalDTO createRentalDTO) {
+    public RentalDTO createRental(CreateRentalDTO createRentalDTO) throws Exception {
 
         EntityManager em = emf.createEntityManager();
         Car car;
@@ -60,18 +61,31 @@ public class RentalFacade {
             Query query = em.createQuery("SELECT c FROM Car c WHERE c.model = :model ");
             query.setParameter("model", createRentalDTO.model);
             car = (Car) query.getSingleResult();
-            totalRentalPrice = createRentalDTO.rentalDays  * car.getPricePrDay();
-            rental = new Rental(createRentalDTO.rentalDays, totalRentalPrice);
-            user.addRental(rental);
-            car.addRental(rental);
-            em.getTransaction().begin();
-            em.persist(rental);
-            em.merge(user);
-            em.merge(car);
 
-            em.getTransaction().commit();
+            if (!car.getRentals().isEmpty()) {
 
-        } finally {
+                Rental latestRental = car.getRentals().get(car.getRentals().size() - 1);
+                Date rentalDate = latestRental.getRentalDate();
+                LocalDate localRentalDate = Instant.ofEpochMilli(rentalDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate finishedDate = localRentalDate.plusDays(latestRental.getRentalDays());
+
+                LocalDate todaysDate = LocalDate.now();
+                if (finishedDate.isAfter(todaysDate)) {
+                    throw new Exception("");
+
+                }
+            }
+                totalRentalPrice = createRentalDTO.rentalDays * car.getPricePrDay();
+                rental = new Rental(createRentalDTO.rentalDays, totalRentalPrice);
+                user.addRental(rental);
+                car.addRental(rental);
+                em.getTransaction().begin();
+                em.persist(rental);
+                em.merge(user);
+                em.merge(car);
+
+                em.getTransaction().commit();
+        }finally {
             em.close();
         }
         return new RentalDTO(rental);
@@ -85,25 +99,24 @@ public class RentalFacade {
         try {
             cars = em.createQuery("SELECT c FROM Car c").getResultList();
             for (Car car : cars) {
-                if(car.getRentals().isEmpty()){
+                if (car.getRentals().isEmpty()) {
                     availableCars.add(car);
                 } else {
-                   Rental latestRental = car.getRentals().get(car.getRentals().size()-1);
-                   Date rentalDate = latestRental.getRentalDate();
-                   LocalDate localRentalDate = Instant.ofEpochMilli(rentalDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
-                   LocalDate finishedDate = localRentalDate.plusDays(latestRental.getRentalDays());
-                   
-                   LocalDate todaysDate = LocalDate.now();
-                    
-                   if(finishedDate.isBefore(todaysDate)){
-                       availableCars.add(car);
-                   }
-                   
+                    Rental latestRental = car.getRentals().get(car.getRentals().size() - 1);
+                    Date rentalDate = latestRental.getRentalDate();
+                    LocalDate localRentalDate = Instant.ofEpochMilli(rentalDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate finishedDate = localRentalDate.plusDays(latestRental.getRentalDays());
+
+                    LocalDate todaysDate = LocalDate.now();
+
+                    if (finishedDate.isBefore(todaysDate)) {
+                        availableCars.add(car);
+                    }
+
                 }
-                
+
             }
-            
-            
+
         } finally {
             em.close();
         }
@@ -120,7 +133,7 @@ public class RentalFacade {
         }
         return new RentalsDTO(rentals);
     }
-    
+
     public RentalsDTO getAllRentalsForOneUser(String userName) {
         EntityManager em = emf.createEntityManager();
         List<Rental> rentals;
@@ -133,13 +146,16 @@ public class RentalFacade {
         }
         return new RentalsDTO(rentals);
     }
-    
 
-    public RentalDTO deleteRental(long id) {
+    public RentalDTO deleteRental(long id) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         Rental rental;
         try {
             rental = em.find(Rental.class, id);
+            if (rental == null) {
+                throw new NotFoundException("No rental was found");
+            }
+
             em.getTransaction().begin();
             rental.getCar().getRentals().remove(rental);
             em.remove(rental);
@@ -150,7 +166,7 @@ public class RentalFacade {
         }
     }
 
-    public RentalDTO editRental(RentalDTO rentalDTO) {
+    public RentalDTO editRental(RentalDTO rentalDTO) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
         Rental rental;
         Car car;
@@ -158,6 +174,9 @@ public class RentalFacade {
         try {
 
             rental = em.find(Rental.class, rentalDTO.id);
+            if (rental == null) {
+                throw new NotFoundException("No rental was found");
+            }
             rental.setRentalDays(rentalDTO.rentalDays);
             Query query = em.createQuery("SELECT c FROM Car c WHERE c.model = :model");
             query.setParameter("model", rentalDTO.model);

@@ -7,6 +7,7 @@ import dto.CreateRentalDTO;
 import dto.RentalDTO;
 import dto.RentalsDTO;
 import entities.User;
+import errorhandling.NotFoundException;
 import facades.RentalFacade;
 import java.io.IOException;
 import java.util.List;
@@ -83,7 +84,7 @@ public class RentalResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @RolesAllowed("user")
-    public String makeRental(String createRentalDTO) {
+    public String makeRental(String createRentalDTO) throws Exception {
         CreateRentalDTO newRental = GSON.fromJson(createRentalDTO, CreateRentalDTO.class);
         RentalDTO createdRental = FACADE.createRental(newRental);
         return GSON.toJson(createdRental);
@@ -124,7 +125,7 @@ public class RentalResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("deleterental/{id}")
     @RolesAllowed("admin")
-    public String deleteReservation(@PathParam("id") long id) {
+    public String deleteReservation(@PathParam("id") long id) throws NotFoundException {
         RentalDTO deletedReservation = FACADE.deleteRental(id);
         return GSON.toJson(deletedReservation);
     }
@@ -134,7 +135,7 @@ public class RentalResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("editrental")
     @RolesAllowed("admin")
-    public String editReservation(String rentalDTO) {
+    public String editReservation(String rentalDTO) throws NotFoundException {
         RentalDTO editRentalDTO = GSON.fromJson(rentalDTO, RentalDTO.class);
         RentalDTO editedRental = FACADE.editRental(editRentalDTO);
         return GSON.toJson(editedRental);

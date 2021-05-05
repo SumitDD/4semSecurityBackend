@@ -151,12 +151,12 @@ public class RentalResourceTest {
         login("user", "testuser");
         given()
                 .contentType("application/json")
-                .body(new CreateRentalDTO(u1.getUserName(), 10, "kia", "rio", 1968, 190))
+                .body(new CreateRentalDTO(u1.getUserName(), 10, c2.getBrand(), c2.getModel(), c2.getYear(), c2.getPricePrDay()))
                 .header("x-access-token", securityToken)
                 .when()
                 .put("/rental/makerental").then()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("brand", equalTo("kia"));
+                .body("brand", equalTo("bmw"));
 
     }
 

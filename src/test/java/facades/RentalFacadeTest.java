@@ -11,6 +11,7 @@ import utils.EMF_Creator;
 
 import entities.Role;
 import entities.User;
+import errorhandling.NotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -105,9 +106,9 @@ public class RentalFacadeTest {
     }
 
     @Test
-    public void testMakeRental() {
-        RentalDTO rentalDTO = rentalFacade.createRental(new CreateRentalDTO(u1.getUserName(), 10, c1.getBrand(), c1.getModel(), c1.getYear(), c1.getPricePrDay()));
-        double totalRentalPrice = 1900;
+    public void testMakeRental() throws Exception {
+        RentalDTO rentalDTO = rentalFacade.createRental(new CreateRentalDTO(u1.getUserName(), 10, c2.getBrand(), c2.getModel(), c2.getYear(), c2.getPricePrDay()));
+        double totalRentalPrice = 2000;
         assertEquals(totalRentalPrice, rentalDTO.totalRentalPrice);
 
     }
@@ -134,13 +135,13 @@ public class RentalFacadeTest {
    
 
     @Test
-    public void testDeleteRental() {
+    public void testDeleteRental() throws NotFoundException {
         RentalDTO rentalDTO = rentalFacade.deleteRental(r.getId());
         assertEquals(u1.getUserName(), r.getUser().getUserName(), "Expects the username: user");
     }
 
     @Test
-    public void testEditDog() {
+    public void testEditDog() throws NotFoundException {
         r.setRentalDays(15);
         RentalDTO rentalDTO = rentalFacade.editRental(new RentalDTO(r));
         assertEquals(2850.0, rentalDTO.totalRentalPrice, "Expects a new total price of 2850'");
