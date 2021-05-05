@@ -91,16 +91,26 @@ public class RentalResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("getrentals")
+    @Path("getallrentals")
     @RolesAllowed("admin")
-    public String getReservations() {
+    public String getAllRentals() {
         /* Vi tager ikke params med, så vi undgår broken access control, 
         alt information hentes fra den bruger der er logget ind, derudover
         bruger vi role based access control @RolesAllowed
          */
-        RentalsDTO rentals = FACADE.getRentals();
+        RentalsDTO rentals = FACADE.getAllRentals();
         return GSON.toJson(rentals);
     }
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("getallrentalsoneuser/{username}")
+    @RolesAllowed("user")
+    public String getAllRentalsOneUser(@PathParam("username") String userName) {
+        RentalsDTO rentals = FACADE.getAllRentalsForOneUser(userName);
+        return GSON.toJson(rentals);
+    }
+    
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

@@ -110,7 +110,7 @@ public class RentalFacade {
         return new CarsDTO(availableCars);
     }
 
-    public RentalsDTO getRentals() {
+    public RentalsDTO getAllRentals() {
         EntityManager em = emf.createEntityManager();
         List<Rental> rentals;
         try {
@@ -120,6 +120,20 @@ public class RentalFacade {
         }
         return new RentalsDTO(rentals);
     }
+    
+    public RentalsDTO getAllRentalsForOneUser(String userName) {
+        EntityManager em = emf.createEntityManager();
+        List<Rental> rentals;
+        try {
+            Query query = em.createQuery("SELECT r FROM Rental r WHERE r.user.userName = :username");
+            query.setParameter("username", userName);
+            rentals = query.getResultList();
+        } finally {
+            em.close();
+        }
+        return new RentalsDTO(rentals);
+    }
+    
 
     public RentalDTO deleteRental(long id) {
         EntityManager em = emf.createEntityManager();
