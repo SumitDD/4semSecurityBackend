@@ -9,23 +9,26 @@
     <class>entities.Role</class>
     <class>entities.User</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
-    <properties>
-      <!-- DO NOT remove the line below. It's not set by the  entityUtils.EMF_Creator -->
-      <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-      <property name="eclipselink.canonicalmodel.subpackage" value="xx345y657"/>
-      <property name="javax.persistence.schema-generation.database.action" value="create"/>
-      <!-- You can raise the logging level to one of the following values CONFIG, FINE, FINER, FINEST, ALL for better,
+   <properties>
+            <!-- DO NOT remove the line below. It's not set by the  entityUtils.EMF_Creator -->
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="eclipselink.canonicalmodel.subpackage" value="xx345y657"/>
+            <property name="javax.persistence.schema-generation.database.action" value="create"/>
+            
+            <property name="javax.persistence.sql-load-script-source" value="META-INF/script.sql"/>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <!-- You can raise the logging level to one of the following values CONFIG, FINE, FINER, FINEST, ALL for better,
                  but also more verbose, log-info 
                  NOTE in production the values will be set to WARNING to report only potential serious problems
             -->
-      <property name="eclipselink.logging.level" value="INFO"/>
-      <property name="eclipselink.logging.level.sql" value="INFO"/>
-      <property name="eclipselink.logging.parameters" value="true"/>
-      <!-- In PRODUCTION the values below, will be overriden by utils.EMF_Creator -->
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/startcode?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
-      <property name="javax.persistence.jdbc.user" value="dev"/>
-      <property name="javax.persistence.jdbc.password" value="ax2"/>
-    </properties>
+            <property name="eclipselink.logging.level" value="INFO"/>
+            <property name="eclipselink.logging.level.sql" value="INFO"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+            <!-- In PRODUCTION the values below, will be overriden by utils.EMF_Creator -->
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/startcode?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
+            <property name="javax.persistence.jdbc.user" value="dev"/>
+            <property name="javax.persistence.jdbc.password" value="ax2"/>
+        </properties>
   </persistence-unit>
   <!-- Database for testing ONLY -->
   <persistence-unit name="puTest" transaction-type="RESOURCE_LOCAL">
