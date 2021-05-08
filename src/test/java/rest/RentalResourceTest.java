@@ -4,6 +4,7 @@ import dto.CarDTO;
 import dto.CreateRentalDTO;
 import dto.RentalDTO;
 import entities.Car;
+import entities.DriverLicenseImage;
 import entities.Rental;
 import entities.Role;
 import entities.User;
@@ -42,7 +43,10 @@ public class RentalResourceTest {
     private static User u1, u2, admin, both;
     private static Car c1, c2;
     private static Rental r;
+     private static DriverLicenseImage d;
     private static String securityToken;
+   
+   
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
@@ -77,12 +81,13 @@ public class RentalResourceTest {
 
     // Setup the DataBase (used by the test-server and this test) in a known state BEFORE EACH TEST
     //TODO -- Make sure to change the EntityClass used below to use YOUR OWN (renamed) Entity class
-    @BeforeEach
+   @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
             //Delete existing users and roles to get a "fresh" database
+            em.createNativeQuery("DELETE FROM DRIVERLICENSEIMAGE").executeUpdate();
             em.createNativeQuery("DELETE FROM RENTAL").executeUpdate();
             em.createNativeQuery("DELETE FROM CAR").executeUpdate();
             em.createNativeQuery("DELETE FROM user_roles").executeUpdate();
@@ -95,10 +100,11 @@ public class RentalResourceTest {
             c1 = new Car("kia", "rio", 1968, 190);
             c2 = new Car("bmw", "m5", 2010, 200);
             r = new Rental(10, 1500);
-
+            d = new DriverLicenseImage("xxxMyLicenseImage.com");
             Role userRole = new Role("user");
             Role adminRole = new Role("admin");
             u1.addRole(userRole);
+            u1.setDriverLicense(d);
             admin.addRole(adminRole);
             both.addRole(userRole);
             both.addRole(adminRole);
@@ -107,9 +113,9 @@ public class RentalResourceTest {
             em.persist(userRole);
             em.persist(adminRole);
             em.persist(u1);
-            em.persist(c2);
             em.persist(admin);
             em.persist(both);
+            em.persist(c2);
 
             em.getTransaction().commit();
         } finally {
