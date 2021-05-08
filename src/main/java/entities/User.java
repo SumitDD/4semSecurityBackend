@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -39,6 +40,11 @@ public class User implements Serializable {
   private List<Role> roleList = new ArrayList<>();
   @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
   private List<Rental> rentals;
+  
+  @OneToOne(mappedBy="user", cascade = CascadeType.PERSIST)
+  private DriverLicenseImage driverLicense;
+  
+  
   public List<String> getRolesAsStrings() {
     if (roleList.isEmpty()) {
       return null;
@@ -102,5 +108,16 @@ public class User implements Serializable {
   public void addRole(Role userRole) {
     roleList.add(userRole);
   }
+
+    public DriverLicenseImage getDriverLicense() {
+        return driverLicense;
+    }
+
+    public void setDriverLicense(DriverLicenseImage driverLicense) {
+        if(driverLicense != null){
+           this.driverLicense = driverLicense;
+           driverLicense.setUser(this);
+        }
+    }
 
 }

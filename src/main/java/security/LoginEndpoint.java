@@ -102,18 +102,20 @@ public class LoginEndpoint {
         String username;
         String password1;
         String password2;
+        String imgUrl;
         try {
             JsonObject json = JsonParser.parseString(jsonString).getAsJsonObject();
             username = json.get("username").getAsString();
             password1 = json.get("password1").getAsString();
             password2 = json.get("password2").getAsString();
+            imgUrl = json.get("imgUrl").getAsString();
             
         } catch (Exception e) {
            throw new API_Exception("Malformed JSON Suplied",400,e);
         }
 
         try {
-            User user = USER_FACADE.createUser(username, password1, password2);
+            User user = USER_FACADE.createUser(username, password1, password2, imgUrl);
             String token = createToken(username, user.getRolesAsStrings());
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("username", username);

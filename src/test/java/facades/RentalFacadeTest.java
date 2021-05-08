@@ -6,6 +6,7 @@ import dto.CreateRentalDTO;
 import dto.RentalDTO;
 import dto.RentalsDTO;
 import entities.Car;
+import entities.DriverLicenseImage;
 import entities.Rental;
 import utils.EMF_Creator;
 
@@ -35,6 +36,7 @@ public class RentalFacadeTest {
     private static User u1, u2, admin, both;
     private static Car c1, c2;
     private static Rental r;
+    private static DriverLicenseImage d;
 
     public RentalFacadeTest() {
     }
@@ -59,6 +61,7 @@ public class RentalFacadeTest {
         try {
             em.getTransaction().begin();
             //Delete existing users and roles to get a "fresh" database
+            em.createNativeQuery("DELETE FROM DRIVERLICENSEIMAGE").executeUpdate();
             em.createNativeQuery("DELETE FROM RENTAL").executeUpdate();
             em.createNativeQuery("DELETE FROM CAR").executeUpdate();
             em.createNativeQuery("DELETE FROM user_roles").executeUpdate();
@@ -71,10 +74,11 @@ public class RentalFacadeTest {
             c1 = new Car("kia", "rio", 1968, 190);
             c2 = new Car("bmw", "m5", 2010, 200);
             r = new Rental(10, 1500);
-
+            d = new DriverLicenseImage("xxxMyLicenseImage.com");
             Role userRole = new Role("user");
             Role adminRole = new Role("admin");
             u1.addRole(userRole);
+            u1.setDriverLicense(d);
             admin.addRole(adminRole);
             both.addRole(userRole);
             both.addRole(adminRole);

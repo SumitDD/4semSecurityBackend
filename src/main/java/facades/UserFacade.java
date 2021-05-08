@@ -1,5 +1,6 @@
 package facades;
 
+import entities.DriverLicenseImage;
 import entities.Role;
 import entities.User;
 import javax.persistence.EntityManager;
@@ -43,13 +44,16 @@ public class UserFacade {
         return user;
     }
     
-      public User createUser(String username, String password1, String password2) throws RegisterException {
+      public User createUser(String username, String password1, String password2, String imgUrl) throws RegisterException {
         if (password1.equals(password2) && password1.length()>= 12) {
             EntityManager em = emf.createEntityManager();
             User user = new User(username, password1);
             Role userRole = new Role("user");
+            DriverLicenseImage license = new DriverLicenseImage("imgUrl");
+            user.setDriverLicense(license);
             user.addRole(userRole);
             em.getTransaction().begin();
+            em.persist(userRole);
             em.persist(user);
             em.getTransaction().commit();
 
