@@ -84,7 +84,7 @@ public class RentalResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @RolesAllowed("user")
-    public String makeRental(String createRentalDTO) throws Exception {
+    public String createRental(String createRentalDTO) throws Exception {
         CreateRentalDTO newRental = GSON.fromJson(createRentalDTO, CreateRentalDTO.class);
         RentalDTO createdRental = FACADE.createRental(newRental);
         return GSON.toJson(createdRental);
