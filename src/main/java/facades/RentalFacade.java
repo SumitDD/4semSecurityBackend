@@ -7,6 +7,7 @@ import dto.RentalsDTO;
 import entities.Car;
 import entities.Rental;
 import entities.User;
+import errorhandling.CarException;
 import errorhandling.NotFoundException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -71,8 +72,7 @@ public class RentalFacade {
 
                 LocalDate todaysDate = LocalDate.now();
                 if (finishedDate.isAfter(todaysDate)) {
-                    throw new Exception("");
-
+                    throw new CarException("Car is not available at the given date");
                 }
             }
                 totalRentalPrice = createRentalDTO.rentalDays * car.getPricePrDay();
