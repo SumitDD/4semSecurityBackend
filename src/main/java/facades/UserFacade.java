@@ -48,8 +48,8 @@ public class UserFacade {
         if (password1.equals(password2) && password1.length()>= 12) {
             EntityManager em = emf.createEntityManager();
             User user = new User(username, password1);
-            Role userRole = new Role("user");
-            DriverLicenseImage license = new DriverLicenseImage("imgUrl");
+            Role userRole = em.find(Role.class, "user");
+            DriverLicenseImage license = new DriverLicenseImage(imgUrl);
             user.setDriverLicense(license);
             user.addRole(userRole);
             em.getTransaction().begin();
@@ -60,7 +60,7 @@ public class UserFacade {
             try {
                 user = em.find(User.class, username);
                 if (user == null || !user.verifyPassword(password1)) {
-                    throw new RegisterException("Invalid user name or password");
+                    throw new RegisterException("Make sure the two passwords are identical and upload a driverlicense!");
                 }
             } finally {
                 em.close();
@@ -68,7 +68,7 @@ public class UserFacade {
             return user;
 
         } else {
-            throw new RegisterException("The passwords didnt match and the characters must be identical");
+            throw new RegisterException("Make sure the two passwords are identical and upload a driverlicense!");
         }
     }
 
