@@ -99,9 +99,8 @@ public class RentalFacade {
         try {
             cars = em.createQuery("SELECT c FROM Car c").getResultList();
             for (Car car : cars) {
-                if (car.getRentals().isEmpty()) {
-                    availableCars.add(car);
-                } else {
+                if (!car.getRentals().isEmpty()) {
+                    
                     Rental latestRental = car.getRentals().get(car.getRentals().size() - 1);
                     Date rentalDate = latestRental.getRentalDate();
                     LocalDate localRentalDate = Instant.ofEpochMilli(rentalDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
@@ -112,6 +111,8 @@ public class RentalFacade {
                     if (finishedDate.isBefore(todaysDate)) {
                         availableCars.add(car);
                     }
+                } else {
+                    availableCars.add(car);
 
                 }
 
