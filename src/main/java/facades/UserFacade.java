@@ -50,7 +50,12 @@ public class UserFacade {
         return user;
     }
     
-      public User createUser(String username, String password1, String password2, String imgUrl) throws RegisterException {
+      public User createUser(String username, String password1, String password2, String reToken, String imgUrl) throws RegisterException, IOException, AuthenticationException {
+          boolean isVerified = security.Recaptcha.validateHuman(reToken);
+          if(!isVerified){
+                throw new AuthenticationException("Please validate that you are a human");
+            }
+          
         if (password1.equals(password2) && password1.length()>= 12) {
             EntityManager em = emf.createEntityManager();
             User user = new User(username, password1);
