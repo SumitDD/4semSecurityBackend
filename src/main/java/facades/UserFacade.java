@@ -3,6 +3,7 @@ package facades;
 import entities.DriverLicenseImage;
 import entities.Role;
 import entities.User;
+import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import security.errorhandling.AuthenticationException;
@@ -30,10 +31,15 @@ public class UserFacade {
         return instance;
     }
 
-    public User getVeryfiedUser(String username, String password) throws AuthenticationException {
+    public User getVeryfiedUser(String username, String password, String retoken) throws AuthenticationException, IOException {
         EntityManager em = emf.createEntityManager();
+        
         User user;
         try {
+            boolean isVerified = security.Recaptcha.validateHuman(retoken);
+            if(!isVerified){
+                throw new AuthenticationException("Please validate that you are a human");
+            }
             user = em.find(User.class, username);
             if (user == null || !user.verifyPassword(password)) {
                 throw new AuthenticationException("Invalid user name or password");
@@ -48,8 +54,8 @@ public class UserFacade {
         if (password1.equals(password2) && password1.length()>= 12) {
             EntityManager em = emf.createEntityManager();
             User user = new User(username, password1);
-            Role userRole = new Role("user");
-            DriverLicenseImage license = new DriverLicenseImage("imgUrl");
+            Role userRole = em.find(Role.class, "user");
+            DriverLicenseImage license = new DriverLicenseImage(imgUrl);
             user.setDriverLicense(license);
             user.addRole(userRole);
             em.getTransaction().begin();
