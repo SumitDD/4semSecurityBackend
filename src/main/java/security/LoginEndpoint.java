@@ -101,16 +101,18 @@ public class LoginEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response register(String jsonString) throws API_Exception, RegisterException {
+    public Response register(String jsonString) throws API_Exception, RegisterException, IOException, AuthenticationException {
         String username;
         String password1;
         String password2;
+        String reToken;
         String imgUrl;
         try {
             JsonObject json = JsonParser.parseString(jsonString).getAsJsonObject();
             username = json.get("username").getAsString();
             password1 = json.get("password1").getAsString();
             password2 = json.get("password2").getAsString();
+             reToken = json.get("retoken").getAsString();
             imgUrl = json.get("imgUrl").getAsString();
             
         } catch (Exception e) {
@@ -118,7 +120,7 @@ public class LoginEndpoint {
         }
 
         try {
-            User user = USER_FACADE.createUser(username, password1, password2, imgUrl);
+            User user = USER_FACADE.createUser(username, password1, password2, reToken, imgUrl);
             String token = createToken(username, user.getRolesAsStrings());
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("username", username);
