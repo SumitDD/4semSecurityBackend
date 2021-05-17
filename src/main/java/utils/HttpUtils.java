@@ -1,6 +1,8 @@
 package utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,17 +27,20 @@ public class HttpUtils {
         return jsonStr;
     }
     public static String postData(String _url ) throws MalformedURLException, IOException {
-        URL url = new URL(_url);
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("POST");
-        //con.setRequestProperty("Accept", "application/json;charset=UTF-8");
-
-        Scanner scan = new Scanner(con.getInputStream());
-        String jsonStr = null;
-        if (scan.hasNext()) {
-            jsonStr = scan.nextLine();
-        }
-        scan.close();
-        return jsonStr;
+         URL url = new URL(_url);
+    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+    con.setRequestMethod("GET");
+    //con.setRequestProperty("Accept", "application/json;charset=UTF-8");
+    con.setRequestProperty("Accept", "application/json");
+    con.setRequestProperty("User-Agent", "server");
+    Scanner scan = new Scanner(con.getInputStream());
+    String jsonStr = "";
+    while(scan.hasNext()) {
+      jsonStr += scan.nextLine();
     }
+    scan.close();
+    return jsonStr;
+    }
+    
+ 
 }
