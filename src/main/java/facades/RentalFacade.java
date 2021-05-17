@@ -79,6 +79,7 @@ public class RentalFacade {
                 rental = new Rental(createRentalDTO.rentalDays, totalRentalPrice);
                 user.addRental(rental);
                 car.addRental(rental);
+                System.out.println(rental.getCar().getBrand());
                 em.getTransaction().begin();
                 em.persist(rental);
                 em.merge(user);
@@ -99,20 +100,25 @@ public class RentalFacade {
         try {
             cars = em.createQuery("SELECT c FROM Car c").getResultList();
             for (Car car : cars) {
+                System.out.println("size------------" + car.getBrand() + "" +  car.getRentals().size());
                 if (!car.getRentals().isEmpty()) {
-                    
-                    Rental latestRental = car.getRentals().get(car.getRentals().size() - 1);
+                     Rental latestRental = car.getRentals().get(car.getRentals().size() - 1);
                     Date rentalDate = latestRental.getRentalDate();
                     LocalDate localRentalDate = Instant.ofEpochMilli(rentalDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
                     LocalDate finishedDate = localRentalDate.plusDays(latestRental.getRentalDays());
-
+                    System.out.println(localRentalDate);
+                    System.out.println(finishedDate);
+                    
                     LocalDate todaysDate = LocalDate.now();
 
                     if (finishedDate.isBefore(todaysDate)) {
                         availableCars.add(car);
+                        System.out.println("------------- car is available");
                     }
                 } else {
+                    System.out.println("------------START");
                     availableCars.add(car);
+                    System.out.println("------" + car.getModel());
 
                 }
 
@@ -169,27 +175,27 @@ public class RentalFacade {
 
     public RentalDTO editRental(RentalDTO rentalDTO) throws NotFoundException {
         EntityManager em = emf.createEntityManager();
-        Rental rental;
+        Rental foundRental;
         Car car;
         double totalRentalPrice;
         try {
-
-            rental = em.find(Rental.class, rentalDTO.id);
-            if (rental == null) {
+            em.getTransaction().begin();
+            foundRental = em.find(Rental.class, rentalDTO.id);
+            if (foundRental == null) {
                 throw new NotFoundException("No rental was found");
             }
-            rental.setRentalDays(rentalDTO.rentalDays);
+          
+            em.remove(foundRental);
             Query query = em.createQuery("SELECT c FROM Car c WHERE c.model = :model");
             query.setParameter("model", rentalDTO.model);
             car = (Car) query.getSingleResult();
-            rental.setCar(car);
-            totalRentalPrice = rentalDTO.rentalDays * car.getPricePrDay();
-            rental.setTotalRentPrice(totalRentalPrice);
-            rental.setRentalDate(rentalDTO.rentalDate);
-            em.getTransaction().begin();
-            em.merge(rental);
+            totalRentalPrice = rentalDTO.rentalDays * car.getPricePrDay();            
+            Rental newRental = new Rental(rentalDTO.rentalDays, totalRentalPrice);  
+            newRental.setCar(car);
+            newRental.setRentalDate(rentalDTO.rentalDate);           
+            em.persist(newRental);
             em.getTransaction().commit();
-            return new RentalDTO(rental);
+            return new RentalDTO(newRental);
         } finally {
             em.close();
         }
