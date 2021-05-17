@@ -103,11 +103,12 @@ public class RentalFacadeTest {
     }
 
     // TODO: Delete or change this method 
-    @Test
+    
+    /*@Test
     public void testVerifyUser() throws AuthenticationException {
         User user = facade.getVeryfiedUser("admin", "testadmin");
         assertEquals("admin", admin.getUserName());
-    }
+    }*/
 
     @Test
     public void testMakeRental() throws Exception {

@@ -24,4 +24,18 @@ public class HttpUtils {
         scan.close();
         return jsonStr;
     }
+    public static String postData(String _url ) throws MalformedURLException, IOException {
+        URL url = new URL(_url);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("POST");
+        //con.setRequestProperty("Accept", "application/json;charset=UTF-8");
+
+        Scanner scan = new Scanner(con.getInputStream());
+        String jsonStr = null;
+        if (scan.hasNext()) {
+            jsonStr = scan.nextLine();
+        }
+        scan.close();
+        return jsonStr;
+    }
 }
