@@ -66,7 +66,7 @@ public class UserFacade {
             try {
                 user = em.find(User.class, username);
                 if (user == null || !user.verifyPassword(password1)) {
-                    throw new RegisterException("Invalid user name or password");
+                    throw new RegisterException("Make sure the two passwords are identical and upload a driverlicense!");
                 }
             } finally {
                 em.close();
@@ -74,7 +74,7 @@ public class UserFacade {
             return user;
 
         } else {
-            throw new RegisterException("The passwords didnt match and the characters must be identical");
+            throw new RegisterException("Make sure the two passwords are identical and upload a driverlicense!");
         }
     }
 
