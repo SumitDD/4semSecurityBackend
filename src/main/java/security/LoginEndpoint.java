@@ -29,6 +29,7 @@ import java.io.IOException;
 import javax.persistence.EntityManagerFactory;
 import security.errorhandling.RegisterException;
 import utils.EMF_Creator;
+import com.google.json.JsonSanitizer;
 
 @Path("login")
 public class LoginEndpoint {
@@ -45,7 +46,8 @@ public class LoginEndpoint {
         String password;
         String reToken;
         try {
-            JsonObject json = JsonParser.parseString(jsonString).getAsJsonObject();
+            String wellFormedJson = JsonSanitizer.sanitize(jsonString);
+            JsonObject json = JsonParser.parseString(wellFormedJson).getAsJsonObject();
             username = json.get("username").getAsString();
             password = json.get("password").getAsString();
             reToken = json.get("retoken").getAsString();
@@ -108,11 +110,12 @@ public class LoginEndpoint {
         String reToken;
         String imgUrl;
         try {
-            JsonObject json = JsonParser.parseString(jsonString).getAsJsonObject();
+            String wellFormedJson = JsonSanitizer.sanitize(jsonString);
+            JsonObject json = JsonParser.parseString(wellFormedJson).getAsJsonObject();
             username = json.get("username").getAsString();
             password1 = json.get("password1").getAsString();
             password2 = json.get("password2").getAsString();
-             reToken = json.get("retoken").getAsString();
+            reToken = json.get("retoken").getAsString();
             imgUrl = json.get("imgUrl").getAsString();
             
         } catch (Exception e) {

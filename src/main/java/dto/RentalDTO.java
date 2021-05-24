@@ -54,6 +54,11 @@ public class RentalDTO {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "RentalDTO{" + "id=" + id + ", userName=" + userName + ", rentalDays=" + rentalDays + ", rentalDate=" + rentalDate + ", totalRentalPrice=" + totalRentalPrice + ", brand=" + brand + ", model=" + model + ", year=" + year + ", pricePerDay=" + pricePerDay + '}';
+    }
     
     
 

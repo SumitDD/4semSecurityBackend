@@ -231,7 +231,7 @@ public class RentalResourceTest {
     }
 
     @Test
-    public void testEditDog() throws Exception {
+    public void testEditRental() throws Exception {
         login("admin", "testadmin");
 
         r.setRentalDays(15);

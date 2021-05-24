@@ -32,6 +32,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import utils.EMF_Creator;
+import com.google.json.JsonSanitizer;
 //import utils.SetupTestUsers;
 
 @Path("rental")
@@ -85,7 +86,8 @@ public class RentalResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @RolesAllowed("user")
     public String createRental(String createRentalDTO) throws Exception {
-        CreateRentalDTO newRental = GSON.fromJson(createRentalDTO, CreateRentalDTO.class);
+        String wellFormedJson = JsonSanitizer.sanitize(createRentalDTO);
+        CreateRentalDTO newRental = GSON.fromJson(wellFormedJson, CreateRentalDTO.class);
         RentalDTO createdRental = FACADE.createRental(newRental);
         return GSON.toJson(createdRental);
     }
@@ -136,7 +138,8 @@ public class RentalResource {
     @Path("editrental")
     @RolesAllowed("admin")
     public String editReservation(String rentalDTO) throws NotFoundException {
-        RentalDTO editRentalDTO = GSON.fromJson(rentalDTO, RentalDTO.class);
+        String wellFormedJson = JsonSanitizer.sanitize(rentalDTO);
+        RentalDTO editRentalDTO = GSON.fromJson(wellFormedJson, RentalDTO.class);
         RentalDTO editedRental = FACADE.editRental(editRentalDTO);
         return GSON.toJson(editedRental);
     }
