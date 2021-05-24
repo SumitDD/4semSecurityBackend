@@ -33,7 +33,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import utils.EMF_Creator;
 import com.google.json.JsonSanitizer;
-//import utils.SetupTestUsers;
+import utils.SetupTestUsers;
 
 @Path("rental")
 public class RentalResource {
@@ -73,12 +73,13 @@ public class RentalResource {
         return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
     }
 
-    //@Path("setUpUsers")
-    //@GET
-    //@Produces({MediaType.APPLICATION_JSON})
-    //public void setUpUsers() {
-    //    SetupTestUsers.setUpUsers();
-    //}
+    @Path("setUpUsers")
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public void setUpUsers() {
+        SetupTestUsers.setUpUsers();
+        // til online
+    }
 
     @Path("makerental")
     @PUT
