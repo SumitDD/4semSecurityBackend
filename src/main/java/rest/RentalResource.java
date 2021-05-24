@@ -33,7 +33,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import utils.EMF_Creator;
 import com.google.json.JsonSanitizer;
-import utils.SetupTestUsers;
+//import utils.SetupTestUsers;
 
 @Path("rental")
 public class RentalResource {
