@@ -73,13 +73,13 @@ public class RentalResource {
         return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
     }
 
-    @Path("setUpUsers")
+    /*@Path("setUpUsers")
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public void setUpUsers() {
         SetupTestUsers.setUpUsers();
         // til online
-    }
+    }*/
 
     @Path("makerental")
     @PUT
