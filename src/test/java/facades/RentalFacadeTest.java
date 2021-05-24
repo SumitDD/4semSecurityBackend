@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import security.errorhandling.AuthenticationException;
 
 //Uncomment the line below, to temporarily disable this test
-@Disabled
+//@Disabled
 public class RentalFacadeTest {
 
     private static EntityManagerFactory emf;
@@ -146,9 +146,10 @@ public class RentalFacadeTest {
     }
 
     @Test
-    public void testEditDog() throws NotFoundException {
+    public void testEditRental() throws NotFoundException {
         r.setRentalDays(15);
         RentalDTO rentalDTO = rentalFacade.editRental(new RentalDTO(r));
+        System.out.println("------------------------------------------------------ssssssssssssssssssssssssssss"+rentalDTO);
         assertEquals(2850.0, rentalDTO.totalRentalPrice, "Expects a new total price of 2850'");
     }
 

@@ -56,7 +56,9 @@ public class UserFacade {
                 throw new AuthenticationException("Please validate that you are a human");
             }
           
-        if (password1.equals(password2) && password1.length()>= 12) {
+          boolean isPasswordValid = security.PasswordPolicy.checkPassword(password1);
+          
+        if (password1.equals(password2) && isPasswordValid) {
             EntityManager em = emf.createEntityManager();
             User user = new User(username, password1);
             Role userRole = em.find(Role.class, "user");
@@ -71,7 +73,7 @@ public class UserFacade {
             try {
                 user = em.find(User.class, username);
                 if (user == null || !user.verifyPassword(password1)) {
-                    throw new RegisterException("Make sure the two passwords are identical and upload a driverlicense!");
+                    throw new RegisterException("Make sure the two passwords are identical and upload a driverlicense furthoremore password should contain one digit, one uppercase letter and one lowercase!");
                 }
             } finally {
                 em.close();
@@ -79,7 +81,7 @@ public class UserFacade {
             return user;
 
         } else {
-            throw new RegisterException("Make sure the two passwords are identical and upload a driverlicense!");
+            throw new RegisterException("Make sure the two passwords are identical and upload a driverlicense furthoremore password should contain one digit, one uppercase letter and one lowercase!");
         }
     }
 

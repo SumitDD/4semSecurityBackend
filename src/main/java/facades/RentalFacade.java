@@ -173,29 +173,25 @@ public class RentalFacade {
         }
     }
 
-    public RentalDTO editRental(RentalDTO rentalDTO) throws NotFoundException {
+   public RentalDTO editRental(RentalDTO rentalDTO) {
         EntityManager em = emf.createEntityManager();
-        Rental foundRental;
+        Rental rental;
         Car car;
         double totalRentalPrice;
         try {
-            em.getTransaction().begin();
-            foundRental = em.find(Rental.class, rentalDTO.id);
-            if (foundRental == null) {
-                throw new NotFoundException("No rental was found");
-            }
-          
-            em.remove(foundRental);
+
+            rental = em.find(Rental.class, rentalDTO.id);
+            rental.setRentalDays(rentalDTO.rentalDays);
             Query query = em.createQuery("SELECT c FROM Car c WHERE c.model = :model");
             query.setParameter("model", rentalDTO.model);
             car = (Car) query.getSingleResult();
-            totalRentalPrice = rentalDTO.rentalDays * car.getPricePrDay();            
-            Rental newRental = new Rental(rentalDTO.rentalDays, totalRentalPrice);  
-            newRental.setCar(car);
-            newRental.setRentalDate(rentalDTO.rentalDate);           
-            em.persist(newRental);
+            rental.setCar(car);
+            totalRentalPrice = rentalDTO.rentalDays * car.getPricePrDay();
+            rental.setTotalRentPrice(totalRentalPrice);
+            em.getTransaction().begin();
+            em.merge(rental);
             em.getTransaction().commit();
-            return new RentalDTO(newRental);
+            return new RentalDTO(rental);
         } finally {
             em.close();
         }
