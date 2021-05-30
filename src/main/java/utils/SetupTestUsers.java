@@ -23,9 +23,9 @@ public class SetupTestUsers {
     // Also, either delete this file, when users are created or rename and add to .gitignore
     // Whatever you do DO NOT COMMIT and PUSH with the real passwords
 
-    User user = new User("user", "testuser");
-    User admin = new User("admin", "testadmin");
-    User both = new User("user_admin", "testuseradmin");
+    User user = new User("passat", "Passat20212630");
+    User admin = new User("golf", "Golf20162640");
+    User both = new User("golf_passat", "golfpassat2630");
     Car car = em.find(Car.class, (long)1);
     DriverLicenseImage driverLicense = new DriverLicenseImage("xxxMyLicenseImage.com");
     Rental rental = new Rental(10, 1500);
