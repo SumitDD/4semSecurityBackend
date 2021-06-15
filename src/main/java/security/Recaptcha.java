@@ -13,8 +13,8 @@ public class Recaptcha {
     
     public static boolean validateHuman(String retoken) throws IOException{
         boolean isVerified = false;
-        String secret = "6LfPttgaAAAAAD-rq4dfmTAG-hoEWSBA4uSf5EHK" ;
-        String url = "https://www.google.com/recaptcha/api/siteverify?secret=6LfPttgaAAAAAD-rq4dfmTAG-hoEWSBA4uSf5EHK&response=" + retoken;
+        String secret = "6LfiyusaAAAAADKkO8-qPX_Go3FIbCFQVD8ZZINl" ;
+        String url = "https://www.google.com/recaptcha/api/siteverify?secret=6LfiyusaAAAAADKkO8-qPX_Go3FIbCFQVD8ZZINl&response=" + retoken;
         String response = HttpUtils.postData(url);
         RecapDTO recapDTO = GSON.fromJson(response, RecapDTO.class);
         System.out.println(recapDTO.success);
